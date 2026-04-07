@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Acceso - Conalep 109</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
-        #reader { width: 100%; max-width: 500px; margin: auto; border: 5px solid #004a99; border-radius: 10px; }
-        #status { margin-top: 20px; padding: 20px; font-weight: bold; border-radius: 5px; }
+        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; padding: 20px; }
+        #reader { width: 100%; max-width: 500px; margin: auto; border: 5px solid #004a99; border-radius: 10px; overflow: hidden; }
+        #status { margin-top: 20px; padding: 20px; font-weight: bold; border-radius: 5px; font-size: 1.2em; }
         .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .waiting { background: #e2e3e5; color: #383d41; }
     </style>
 </head>
 <body>
@@ -19,30 +20,32 @@
     <p>Plantel Conalep 109</p>
 
     <div id="reader"></div>
-
-    <div id="status">Esperando escaneo...</div>
+    <div id="status" class="waiting">Esperando escaneo...</div>
 
     <script>
         const statusDiv = document.getElementById('status');
+        let bloqueado = false;
 
-        // Esta función procesa el dato del QR
         function alDetectarCodigo(decodedText) {
+            if (bloqueado) return;
+            bloqueado = true;
+
             console.log("Código detectado: " + decodedText);
-            
-            // Lógica de Validación (Algoritmo de acceso)
-            // Aquí puedes filtrar por prefijo de matrícula o consultar una base de datos
-            if (decodedText.length >= 10) { 
+
+            // --- ALGORITMO DE SEGURIDAD (CORREGIDO) ---
+            // Solo permite si empieza con 25109 (Tu plantel)
+            if (decodedText.startsWith("25109")) {
                 accesoPermitido(decodedText);
             } else {
-                accesoDenegado("Código no reconocido");
+                // Si es un QR externo, de sabritas o de otra escuela, lo rechaza
+                accesoDenegado("CÓDIGO NO AUTORIZADO");
             }
         }
 
         function accesoPermitido(data) {
             statusDiv.className = "success";
             statusDiv.innerHTML = "✅ ACCESO PERMITIDO <br> Matrícula: " + data;
-            // Aquí se enviaría el log al servidor (opcional)
-            setTimeout(() => reiniciarEscaneo(), 3000); 
+            setTimeout(() => reiniciarEscaneo(), 3000);
         }
 
         function accesoDenegado(motivo) {
@@ -52,8 +55,9 @@
         }
 
         function reiniciarEscaneo() {
-            statusDiv.className = "";
+            statusDiv.className = "waiting";
             statusDiv.innerHTML = "Esperando escaneo...";
+            bloqueado = false;
         }
 
         // Configuración de la cámara
