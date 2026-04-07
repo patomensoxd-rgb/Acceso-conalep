@@ -6,21 +6,22 @@
     <title>Control de Acceso - Conalep 109</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f4f4f4; margin: 0; padding: 20px; }
-        #reader { width: 100%; max-width: 500px; margin: auto; border: 5px solid #004a99; border-radius: 10px; overflow: hidden; }
-        #status { margin-top: 20px; padding: 20px; font-weight: bold; border-radius: 5px; font-size: 1.2em; }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .waiting { background: #e2e3e5; color: #383d41; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #1a1a1a; color: white; margin: 0; padding: 20px; }
+        #reader { width: 100%; max-width: 450px; margin: auto; border: 4px solid #004a99; border-radius: 15px; overflow: hidden; background: black; }
+        #status { margin-top: 25px; padding: 25px; font-weight: bold; border-radius: 10px; font-size: 1.4em; transition: 0.3s; }
+        .success { background: #1b5e20; color: #ccff90; border: 2px solid #b2ff59; }
+        .error { background: #b71c1c; color: #ffcdd2; border: 2px solid #ff5252; }
+        .waiting { background: #333; color: #bbb; border: 2px solid #555; }
+        h2 { color: #00a8e8; }
     </style>
 </head>
 <body>
 
     <h2>Control de Acceso Peatonal</h2>
-    <p>Plantel Conalep 109</p>
+    <p>Plantel Conalep 109 - Cuautitlán</p>
 
     <div id="reader"></div>
-    <div id="status" class="waiting">Esperando escaneo...</div>
+    <div id="status" class="waiting">Esperando escaneo de credencial...</div>
 
     <script>
         const statusDiv = document.getElementById('status');
@@ -30,42 +31,50 @@
             if (bloqueado) return;
             bloqueado = true;
 
-            console.log("Código detectado: " + decodedText);
+            // Limpiamos el texto por si tiene espacios o saltos de línea
+            const codigoLimpio = decodedText.trim();
 
-            // --- ALGORITMO DE SEGURIDAD (CORREGIDO) ---
-            // Solo permite si empieza con 25109 (Tu plantel)
-            if (decodedText.startsWith("25109")) {
-                accesoPermitido(decodedText);
+            // --- ALGORITMO DE SEGURIDAD MEJORADO ---
+            // 1. Verifica si contiene "109" (tu plantel)
+            // 2. Verifica que tenga una longitud mínima lógica
+            const esDeMiEscuela = codigoLimpio.includes("109");
+
+            if (esDeMiEscuela && codigoLimpio.length >= 8) {
+                accesoPermitido(codigoLimpio);
             } else {
-                // Si es un QR externo, de sabritas o de otra escuela, lo rechaza
-                accesoDenegado("CÓDIGO NO AUTORIZADO");
+                accesoDenegado("CÓDIGO NO PERTENECER AL PLANTEL 109");
             }
         }
 
         function accesoPermitido(data) {
             statusDiv.className = "success";
-            statusDiv.innerHTML = "✅ ACCESO PERMITIDO <br> Matrícula: " + data;
+            statusDiv.innerHTML = "✅ ACCESO PERMITIDO <br><small>Matrícula: " + data + "</small>";
             setTimeout(() => reiniciarEscaneo(), 3000);
         }
 
         function accesoDenegado(motivo) {
             statusDiv.className = "error";
-            statusDiv.innerHTML = "❌ ACCESO DENEGADO <br>" + motivo;
+            statusDiv.innerHTML = "❌ ACCESO DENEGADO <br><small style='font-size:0.6em;'>" + motivo + "</small>";
             setTimeout(() => reiniciarEscaneo(), 3000);
         }
 
         function reiniciarEscaneo() {
             statusDiv.className = "waiting";
-            statusDiv.innerHTML = "Esperando escaneo...";
+            statusDiv.innerHTML = "Esperando escaneo de credencial...";
             bloqueado = false;
         }
 
-        // Configuración de la cámara
+        // Configuración de la cámara con mejor resolución
         const html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 15, qrbox: 250 }
+            "reader", { 
+                fps: 20, 
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            }
         );
 
         html5QrcodeScanner.render(alDetectarCodigo);
     </script>
 </body>
 </html>
+
