@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Acceso - Conalep 109</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #eceff1; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #004a99; margin-bottom: 5px; }
+        #reader { width: 100%; border-radius: 10px; overflow: hidden; border: none !important; }
+        #status { margin-top: 20px; padding: 15px; font-weight: bold; border-radius: 8px; font-size: 1.1em; transition: 0.3s; }
+        .waiting { background: #e0e0e0; color: #666; }
+        .success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .logo-placeholder { font-weight: bold; color: #004a99; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-placeholder">CONALEP 109 <br> PUERTA PEATONAL</div>
+    <div id="reader"></div>
+    <div id="status" class="waiting">Esperando Código QR...</div>
+</div>
+
+<script>
+    const statusDiv = document.getElementById('status');
+    let isProcessing = false;
+
+    function onScanSuccess(decodedText) {
+        if (isProcessing) return; // Evita lecturas múltiples rápidas
+        
+        isProcessing = true;
+        console.log("Código: " + decodedText);
+        
+        // ALGORITMO DE VALIDACIÓN
+        // Modifica el "10" por la longitud de tus matrículas reales
+        if (decodedText.length >= 10) {
+            mostrarResultado(true, "ACCESO PERMITIDO", decodedText);
+        } else {
+            mostrarResultado(false, "CÓDIGO NO VÁLIDO", "Error de formato");
+        }
+    }
+
+    function mostrarResultado(valido, titulo, detalle) {
+        statusDiv.className = valido ? "success" : "error";
+        statusDiv.innerHTML = `<div>${titulo}</div><div style="font-size:0.8em">${detalle}</div>`;
+        
+        // Sonido de aviso (opcional)
+        const audio = new Audio(valido 
+            ? 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3' 
+            : 'https://assets.mixkit.co/active_storage/sfx/2873/2873-preview.mp3');
+        audio.play();
+
+        // Reiniciar después de 3 segundos
+        setTimeout(() => {
+            statusDiv.className = "waiting";
+            statusDiv.innerHTML = "Esperando Código QR...";
+            isProcessing = false;
+        }, 3000);
+    }
+
+    // Configurar escáner (usa la cámara trasera por defecto)
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { 
+            fps: 10, 
+            qrbox: {width: 250, height: 250},
+            aspectRatio: 1.0
+        }
+    );
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
+</body>
+</html>
