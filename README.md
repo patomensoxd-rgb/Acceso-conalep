@@ -3,118 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Inteligente - Conalep 109</title>
+    <title>Sistema de Acceso Conalep 109</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        :root { 
-            --conalep-green: #006a4e; 
-            --conalep-dark: #0f2027; 
-            --accent-glow: #00e676;
-            --error-glow: #ff1744;
+        body { font-family: sans-serif; background: #000; color: white; margin: 0; text-align: center; }
+        
+        /* Banner superior */
+        .banner { background: #fff; padding: 10px; display: flex; justify-content: space-around; align-items: center; border-bottom: 3px solid #b8860b; }
+        .banner img { height: 35px; }
+
+        /* Contenedor principal */
+        .main-container { padding: 20px; max-width: 500px; margin: auto; }
+        #reader { border-radius: 15px; overflow: hidden; border: 2px solid #333; margin-bottom: 20px; }
+        
+        #status-msg { padding: 15px; border-radius: 10px; font-weight: bold; margin-bottom: 15px; display: none; }
+        .error-msg { background: #b71c1c; color: #ffcdd2; border: 1px solid #ff5252; display: block !important; }
+
+        /* Tarjeta de Información */
+        #info-card { 
+            display: none; 
+            padding: 20px; 
+            background: #000; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 100;
+            overflow-y: auto;
         }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--conalep-dark); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        .header { background: rgba(255,255,255,0.95); width: 100%; padding: 20px 0; border-bottom: 5px solid var(--conalep-green); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .header h2 { color: var(--conalep-green); margin: 0; font-size: 1.8em; text-transform: uppercase; }
-        .header p { color: #555; margin: 5px 0 0; }
 
-        .scan-container { width: 90%; max-width: 450px; margin: 30px auto; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); }
+        .title { color: #f48fb1; font-size: 1.4em; font-weight: bold; margin: 20px 0; }
+        .conalep-logo { width: 180px; margin: 10px 0; }
+        .label { font-weight: bold; color: #bbb; font-size: 0.9em; margin-top: 15px; display: block; }
+        .value { font-size: 1.1em; color: #fff; margin-bottom: 5px; display: block; font-weight: bold; }
         
-        #reader { width: 100%; border-radius: 20px; overflow: hidden; border: 4px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
-        
-        #status { margin-top: 30px; padding: 25px; border-radius: 15px; font-size: 1.5em; font-weight: bold; text-transform: uppercase; text-align: center; transition: all 0.4s ease; border: 2px solid transparent; }
-        
-        .waiting { background: #34495e; border-color: #7f8c8d; color: #ecf0f1; }
-        .success { background: #1b5e20; border-color: var(--accent-glow); color: var(--accent-glow); box-shadow: 0 0 25px rgba(0, 230, 118, 0.4); }
-        .error { background: #b71c1c; border-color: var(--error-glow); color: var(--error-glow); box-shadow: 0 0 25px rgba(255, 23, 68, 0.4); }
+        .status-dot { color: #4caf50; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px; font-weight: bold; }
+        .dot { height: 12px; width: 12px; background-color: #00c853; border-radius: 50%; box-shadow: 0 0 10px #00c853; }
 
-        .footer { margin-top: auto; padding: 20px; font-size: 0.85em; opacity: 0.7; color: white; text-align: center; }
+        .btn-reset { margin-top: 30px; padding: 12px 25px; background: #006a4e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>CONALEP 109</h2>
-        <p>Control de Acceso de Estudiantes</p>
+    <div class="banner">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Logo_del_Gobierno_del_Estado_de_M%C3%A9xico.png" alt="EdoMex">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Logotipo_del_Estado_de_M%C3%A9xico.svg/1200px-Logotipo_del_Estado_de_M%C3%A9xico.svg.png" alt="Poder de Servir">
     </div>
 
-    <div class="scan-container">
+    <div class="main-container" id="scanner-section">
+        <h3 style="color: #00a8e8;">Escanear Credencial Conalep</h3>
         <div id="reader"></div>
-        <div id="status" class="waiting">Esperando Credencial...</div>
+        <div id="status-msg"></div>
+        <p style="opacity: 0.6; font-size: 0.9em;">Apunta al código QR o Código de Barras</p>
     </div>
 
-    <div class="footer">
-        Desarrollado por Muñiz Pichardo Orlando<br>
-        Grupo 210 - Plantel Bernardo Quintana Arrioja
+    <div id="info-card">
+        <div class="title">Sistema de Credencialización</div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Conalep_Logo.png" class="conalep-logo" alt="Conalep">
+        
+        <span class="label">Nombre:</span>
+        <span class="value">ORLANDO MUÑIZ PICHARDO</span>
+
+        <span class="label">Matrícula:</span>
+        <span id="display-matricula" class="value">251090464-8</span>
+
+        <span class="label">Curp:</span>
+        <span class="value">MUPO080119HMCXCRA6</span>
+
+        <span class="label">Plantel:</span>
+        <span class="value">Ing. Bernardo Quintana Arrioja</span>
+
+        <span class="label">Carrera:</span>
+        <span class="value">PT-B en Informática</span>
+
+        <span class="label">Estatus Credencial:</span>
+        <div class="status-dot">
+            <span class="dot"></span> 
+            <span>Vigente</span>
+        </div>
+
+        <button class="btn-reset" onclick="resetApp()">Finalizar Acceso</button>
+        
+        <p style="margin-top: 40px; font-size: 0.7em; opacity: 0.5;">Conalep Estado de México @ 2026</p>
     </div>
 
     <script>
-        const statusDiv = document.getElementById('status');
-        let bloqueado = false;
+        let isProcessing = false;
+        const statusMsg = document.getElementById('status-msg');
 
-        function alDetectarCodigo(decodedText) {
-            if (bloqueado) return;
-            bloqueado = true;
-
-            // Limpiamos espacios y caracteres extraños
-            const codigoLimpio = decodedText.trim();
+        function onScanSuccess(decodedText) {
+            if (isProcessing) return;
             
-            // --- ALGORITMO INTELIGENTE CONALEP ---
-            // 1. Debe contener el número de plantel (109)
-            // 2. Longitud entre 10 y 13 (para cubrir variaciones de lectura del guion)
-            const esDelPlantel = codigoLimpio.includes("109");
-            const longitudCoherente = (codigoLimpio.length >= 10 && codigoLimpio.length <= 13);
-
-            if (esDelPlantel && longitudCoherente) {
-                accesoPermitido(codigoLimpio);
+            const cleanText = decodedText.trim();
+            
+            // VALIDACIÓN: Que contenga "109" (Plantel) y longitud razonable
+            if (cleanText.includes("109") && cleanText.length >= 9) {
+                isProcessing = true;
+                showAccess(cleanText);
             } else {
-                accesoDenegado("CÓDIGO NO VÁLIDO / PLANTEL EXTERNO");
+                showError();
             }
         }
 
-        function accesoPermitido(data) {
-            // OMISIÓN DE DATOS PERSONALES:
-            // Solo mostramos los primeros 5 dígitos (que incluyen el año y el plantel)
-            const dataSegura = data.substring(0, 5) + "****" + data.substring(data.length - 2);
-            
-            statusDiv.className = "success";
-            statusDiv.innerHTML = "✅ ACCESO PERMITIDO<br><span style='font-size:0.65em; opacity:0.8;'>Ingreso Registrado: " + dataSegura + "</span>";
-            
-            // Sonido de éxito (opcional, requiere permisos del navegador)
+        function showAccess(matricula) {
+            document.getElementById('display-matricula').innerText = matricula;
+            // Sonido de éxito
             new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg').play().catch(()=>{});
-
-            setTimeout(() => reiniciarEscaneo(), 3500); // 5.0 segundos para la animación
+            
+            // Abrir tarjeta digital
+            document.getElementById('info-card').style.display = 'block';
+            document.getElementById('scanner-section').style.display = 'none';
         }
 
-        function accesoDenegado(motivo) {
-            statusDiv.className = "error";
-            statusDiv.innerHTML = "❌ ACCESO DENEGADO<br><span style='font-size:0.65em; opacity:0.8;'>" + motivo + "</span>";
+        function showError() {
+            if (isProcessing) return;
+            isProcessing = true;
             
-            // Sonido de error (opcional)
+            statusMsg.innerText = "❌ ACCESO DENEGADO - PLANTEL NO VÁLIDO";
+            statusMsg.className = "error-msg";
+            
             new Audio('https://actions.google.com/sounds/v1/alarms/beep_error_short.ogg').play().catch(()=>{});
 
-            setTimeout(() => reiniciarEscaneo(), 3500);
+            setTimeout(() => {
+                statusMsg.className = "";
+                statusMsg.innerText = "";
+                isProcessing = false;
+            }, 3000);
         }
 
-        function reiniciarEscaneo() {
-            statusDiv.className = "waiting";
-            statusDiv.innerHTML = "Esperando Credencial...";
-            bloqueado = false;
+        function resetApp() {
+            document.getElementById('info-card').style.display = 'none';
+            document.getElementById('scanner-section').style.display = 'block';
+            isProcessing = false;
         }
 
-        // Configuración óptima del escáner
-        const scanner = new Html5QrcodeScanner(
-            "reader", { 
-                fps: 20, // Suficientemente rápido para no haber filas
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0,
-                experimentalFeatures: {
-                    useBarCodeDetectorIfSupported: true // Intenta usar la cámara para el código de barras también
-                }
-            }
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 20, qrbox: 250 }
         );
-
-        scanner.render(alDetectarCodigo);
+        html5QrcodeScanner.render(onScanSuccess);
     </script>
 </body>
 </html>
