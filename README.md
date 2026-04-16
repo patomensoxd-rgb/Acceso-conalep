@@ -60,7 +60,7 @@
             color: #666;
             border: 4px solid var(--conalep-green);
             /* Descomenta la línea de abajo y pon la URL real del logo */
-            /* background-image: url('URL_DE_TU_LOGO_CONALEP.png'); background-size: cover; */
+            /* background-image: url('0ea957ca6e616a0ff0c8f6730541aa70.jpg'); background-size: cover; */
         }
 
         .welcome-title {
