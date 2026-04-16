@@ -8,211 +8,276 @@
     
     <style>
         :root {
-            --conalep-green: #007934;
-            --conalep-dark: #005a26;
+            /* NUEVA PALETA CONALEP VERDE */
+            --conalep-green: #007934; /* Verde oficial Conalep */
+            --conalep-green-dark: #005a26;
+            --wolf-gray: #f4f4f4; /* Fondo gris muy claro para contraste */
+            --text-main: #333;
             --white: #ffffff;
-            --bg-gray: #f0f2f5;
-            --danger: #dc3545;
-            --success: #28a745;
+            --danger-red: #dc3545;
+            --success-green: #28a745;
         }
 
         body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            background-color: var(--conalep-green);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            background: var(--wolf-gray); 
+            color: var(--text-main);
             margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
 
-        .main-card {
-            width: 90%;
-            max-width: 450px;
+        .container {
+            width: 100%;
+            max-width: 500px;
             background: var(--white);
-            border-radius: 30px;
-            padding: 40px 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            position: relative;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        /* --- Pantalla de Inicio --- */
+        /* --- Estilos Interfaz Previa (Welcome) --- */
         #welcome-screen {
-            display: block;
-        }
-
-        .logo-container {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 25px;
-            border: 6px solid var(--conalep-green);
-            border-radius: 50%;
-            overflow: hidden;
-            background: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            gap: 20px;
         }
 
-        .logo-container img {
-            width: 85%;
-            height: auto;
-            object-fit: contain;
+        .logo-placeholder {
+            width: 150px;
+            height: 150px;
+            background: #e0e0e0; /* Color temporal */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            border: 4px solid var(--conalep-green);
+            /* Descomenta la línea de abajo y pon la URL real del logo */
+            /* background-image: url('URL_DE_TU_LOGO_CONALEP.png'); background-size: cover; */
         }
 
-        .title {
+        .welcome-title {
+            font-size: 1.8rem;
             color: var(--conalep-green);
-            font-size: 2rem;
             margin: 0;
             font-weight: 800;
-            text-transform: uppercase;
         }
 
-        .subtitle {
-            color: #555;
+        .welcome-subtitle {
             font-size: 1.1rem;
-            margin: 10px 0 30px;
+            color: #666;
+            margin: 0 0 20px 0;
         }
 
-        .btn-ingresar {
-            background: var(--conalep-green);
+        .btn-start {
+            background-color: var(--conalep-green);
             color: white;
             border: none;
-            padding: 18px 50px;
+            padding: 15px 40px;
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            transition: 0.3s all;
-            box-shadow: 0 8px 15px rgba(0,121,52,0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,121,52,0.3);
         }
 
-        .btn-ingresar:hover {
-            background: var(--conalep-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 20px rgba(0,121,52,0.4);
+        .btn-start:hover {
+            background-color: var(--conalep-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,121,52,0.4);
         }
 
-        /* --- Pantalla de Escaneo --- */
+        /* --- Estilos Interfaz Escáner (Oculta por defecto) --- */
         #scanner-screen {
-            display: none;
+            display: none; /* Se activa con JS */
         }
 
-        .jaw-frame {
+        h2.scan-title { 
+            margin: 0 0 5px 0; 
+            color: var(--conalep-green); 
+            text-transform: uppercase; 
+            font-size: 1.2rem;
+        }
+        p.scan-subtitle { margin: 0 0 25px 0; opacity: 0.7; font-size: 0.9rem; }
+
+        /* Contenedor de la Mandíbula */
+        .wolf-jaw-container {
             position: relative;
-            background: #111;
-            border-radius: 20px;
-            padding: 45px 10px;
+            background: #333; /* Fondo oscuro para la cámara */
+            border-radius: 15px;
+            padding: 35px 5px;
             border: 6px solid var(--conalep-green);
-            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
         }
 
-        /* Dientes de Lobo (Mandíbula) */
-        .wolf-teeth {
+        /* Dientes (CSS shapes) */
+        .teeth-top, .teeth-bottom {
             position: absolute;
-            left: 0; width: 100%; height: 45px;
+            left: 0; width: 100%;
+            height: 35px;
             background-image: linear-gradient(135deg, transparent 50%, var(--white) 50%), 
                               linear-gradient(-135deg, transparent 50%, var(--white) 50%);
-            background-size: 40px 45px;
+            background-size: 35px 35px;
+            background-repeat: repeat-x;
             z-index: 10;
         }
         .teeth-top { top: 0; }
-        .teeth-bottom { bottom: 0; transform: scaleY(-1); }
+        .teeth-bottom { 
+            bottom: 0; 
+            transform: scaleY(-1); /* Invierte los dientes para abajo */
+        }
 
+        /* Estilo del Lector QR */
         #reader { 
             width: 100%; 
+            background: #000;
             border: none !important; 
         }
 
-        /* Barra de Estado */
-        #status-bar {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            font-weight: bold;
+        /* Ajustes botones y textos internos de la librería */
+        #reader button {
+            background-color: var(--conalep-green);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        #reader__status_span { color: white !important; }
+
+        /* Estado de Acceso (Barra inferior) */
+        #status { 
+            margin-top: 20px; 
+            padding: 15px; 
             font-size: 1.1rem;
-            background: #f8f9fa;
+            font-weight: bold; 
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: #eee;
             border: 2px solid #ddd;
-            color: #333;
         }
 
-        .access-granted { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
-        .access-denied { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
+        .success { 
+            background: var(--success-green) !important; 
+            color: white; 
+            border-color: var(--success-green) !important;
+        }
 
+        .error { 
+            background: var(--danger-red) !important; 
+            color: white; 
+            border-color: var(--danger-red) !important;
+        }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
+    <div class="container">
         
         <div id="welcome-screen">
-            <div class="logo-container">
-                <img src="0ea957ca6e616a0ff0c8f6730541aa70.png" alt="Logo Lobo Conalep">
+            <div class="logo-placeholder">
+                LOGO<br>CONALEP
             </div>
-            <h1 class="title">Conalep 109</h1>
-            <p class="subtitle">Control de Acceso Peatonal</p>
-            <button class="btn-ingresar" onclick="iniciarEscaneo()">ESCANEAR QR</button>
+            <h1 class="welcome-title">Sistema de Acceso</h1>
+            <p class="welcome-subtitle">Plantel Conalep 109 <br>Bienvenido, Lobo.</p>
+            <button class="btn-start" onclick="iniciarApp()">Iniciar Escaneo</button>
         </div>
 
         <div id="scanner-screen">
-            <h2 style="color: var(--conalep-green); margin: 0 0 15px;">IDENTIFÍCATE</h2>
-            
-            <div class="jaw-frame">
-                <div class="wolf-teeth teeth-top"></div>
+            <h2 class="scan-title">Escanea tu Código</h2>
+            <p class="scan-subtitle">Coloca el QR frente a la cámara</p>
+
+            <div class="wolf-jaw-container">
+                <div class="teeth-top"></div>
+                
                 <div id="reader"></div>
-                <div class="wolf-teeth teeth-bottom"></div>
+                
+                <div class="teeth-bottom"></div>
             </div>
 
-            <div id="status-bar">Esperando código...</div>
+            <div id="status">Esperando lectura...</div>
         </div>
 
     </div>
 
     <script>
-        const welcomeView = document.getElementById('welcome-screen');
-        const scannerView = document.getElementById('scanner-screen');
-        const statusMsg = document.getElementById('status-bar');
-        let html5Scanner;
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const scannerScreen = document.getElementById('scanner-screen');
+        const statusDiv = document.getElementById('status');
+        let html5QrCodeScanner; // Variable global para el scanner
 
-        function iniciarEscaneo() {
-            // Cambio de pantalla
-            welcomeView.style.display = 'none';
-            scannerView.style.display = 'block';
+        // Función que hace el cambio de interfaz
+        function iniciarApp() {
+            // 1. Ocultar bienvenida, mostrar escáner
+            welcomeScreen.style.display = 'none';
+            scannerScreen.style.display = 'block';
 
-            // Iniciar cámara
-            html5Scanner = new Html5QrcodeScanner("reader", { 
-                fps: 15, 
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
-            });
-            html5Scanner.render(onScanSuccess);
+            // 2. Inicializar la cámara (solo cuando se pulsa el botón)
+            inicializarEscaner();
         }
 
-        function onScanSuccess(decodedText) {
-            // Algoritmo de validación simple
-            // Aquí puedes agregar lógica: ej. if(decodedText.startsWith("222"))
+        // Lógica del Escáner QR
+        function alDetectarCodigo(decodedText) {
+            console.log("Datos: " + decodedText);
+
+            // Algoritmo de validación (ejemplo básico)
             if (decodedText.length >= 8) {
-                mostrarResultado("✅ ACCESO PERMITIDO<br>Matrícula: " + decodedText, "access-granted");
+                accesoPermitido(decodedText);
             } else {
-                mostrarResultado("❌ CÓDIGO NO RECONOCIDO", "access-denied");
+                accesoDenegado("Código no válido");
             }
         }
 
-        function mostrarResultado(mensaje, cssClass) {
-            statusMsg.innerHTML = mensaje;
-            statusMsg.className = cssClass;
+        function accesoPermitido(data) {
+            statusDiv.className = "success";
+            statusDiv.innerHTML = "✅ ACCESO CONFIRMADO<br>Matrícula: " + data;
             
-            // Detenemos el scanner momentáneamente
-            html5Scanner.clear();
+            // Pausar escaneo para evitar lecturas múltiples instantáneas
+            html5QrCodeScanner.clear(); 
+            
+            setTimeout(() => reiniciarEscaneo(), 4000);
+        }
 
-            // Reiniciar después de 3 segundos para el siguiente alumno
-            setTimeout(() => {
-                statusMsg.innerHTML = "Esperando código...";
-                statusMsg.className = "";
-                iniciarEscaneo();
-            }, 3500);
+        function accesoDenegado(motivo) {
+            statusDiv.className = "error";
+            statusDiv.innerHTML = "❌ ACCESO DENEGADO<br>" + motivo;
+            
+            html5QrCodeScanner.clear();
+
+            setTimeout(() => reiniciarEscaneo(), 4000);
+        }
+
+        function reiniciarEscaneo() {
+            statusDiv.className = "";
+            statusDiv.innerHTML = "Esperando lectura...";
+            // Reiniciar la cámara
+            inicializarEscaner();
+        }
+
+        function inicializarEscaner() {
+            // Configuración óptima para móviles
+            html5QrCodeScanner = new Html5QrcodeScanner(
+                "reader", { 
+                    fps: 15, 
+                    qrbox: { width: 250, height: 250 },
+                    aspectRatio: 1.0,
+                    rememberLastUsedCamera: true,
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                }
+            );
+            html5QrCodeScanner.render(alDetectarCodigo);
         }
     </script>
 </body>
